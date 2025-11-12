@@ -37,23 +37,31 @@
       display:flex;
       flex-direction:column;
       align-items: center;
-      justify-content:center;
+      padding: 10px;
       background: var(--bg);
       color: var(--text-primary);
     }
     .wrap{
-      width: 700px; 
-      max-width:92%;
-      padding: 20px; 
+      width: 100%;
+      max-width: 100%;
+      padding: 12px;
+      margin: 0;
       background: var(--panel);
       border-radius: 8px;
       box-shadow: 0 0 20px var(--shadow);
       border: 1px solid var(--border-color);
     } 
 
-    header{display:flex;align-items:center;justify-content:space-between;margin-bottom: 12px;}
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
     h1{margin:0;font-size:20px;color:var(--accent)}
-    p.lead{margin:4px 0 0;color:var(--text-muted)}
+    p.lead{margin:4px 0 0;color:var(--text-muted); width: 100%;}
     .choices{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px}
     .option{
       flex:1;
@@ -80,16 +88,25 @@
     }
     .option h2{margin:0;color:var(--text-primary);font-size:18px}
     .option p{margin:0;color:var(--text-muted);font-size:13px}
-    .foot{display:flex;justify-content:space-between;align-items:center;margin-top: 14px;color:var(--text-muted);font-size:13px}
+    
+    .foot{
+      display:flex;
+      margin-top: 14px;
+      color:var(--text-muted);
+      font-size:13px;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 5px;
+    }
     .small{font-size:12px;color:var(--text-muted)}
 
-    /* --- CSS: Konfigurasi Global --- */
+    /* --- CSS: Konfigurasi Global (Mobile-First) --- */
     .global-config {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column; 
       align-items: center;
-      justify-content: center;
-      gap: 20px;
+      gap: 12px;
       margin-top: 10px;
       margin-bottom: 18px;
       padding: 12px;
@@ -98,21 +115,23 @@
       border: 1px solid var(--border-color);
     }
     
-    /* Style untuk Segmented Control (Pengganti Switch) */
     .segmented-control {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: 100%;
       border-radius: 6px;
       overflow: hidden;
       border: 1px solid var(--border-color);
     }
     .arrow-option {
-      padding: 8px 16px;
+      padding: 10px 16px;
       cursor: pointer;
       background: transparent;
       color: var(--text-muted);
       border: none;
       font-weight: 600;
       transition: background .2s ease, color .2s ease;
+      text-align: center;
     }
     .arrow-option:not(:last-child) {
       border-right: 1px solid var(--border-color);
@@ -126,11 +145,11 @@
       color: var(--text-primary);
     }
 
-    /* Style untuk Input Jarak */
     .distance-input {
       display: flex;
       align-items: center;
       gap: 8px;
+      width: 100%;
     }
     .distance-input label {
       font-size: 13px;
@@ -142,9 +161,10 @@
       padding: 8px 10px;
       border-radius: 6px;
       border: 1px solid var(--border-color);
-      background: var(--panel); /* Sedikit beda dari bg */
+      background: var(--panel);
       color: var(--text-primary);
-      width: 70px;
+      flex: 1;
+      min-width: 50px;
       text-align: center;
       font-weight: 600;
     }
@@ -156,15 +176,13 @@
       -moz-appearance: textfield;
     }
     
-    /* --- PERUBAHAN CSS: Menambahkan style untuk unit (M) --- */
     .distance-unit {
       font-size: 13px;
       white-space: nowrap;
       color: var(--text-muted);
       font-weight: 600;
     }
-    /* --- AKHIR PERUBAHAN CSS --- */
-
+    /* --- AKHIR CSS Mobile --- */
 
     /* --- CSS VISUAL TARGET --- */
     .target-visual {
@@ -173,7 +191,7 @@
       border-radius: 50%;
       flex-shrink: 0;
       position: relative;
-      border: 1px solid rgba(255,255,255,0.1); /* Batas visual target */
+      border: 1px solid rgba(255,255,255,0.1);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -182,10 +200,9 @@
     }
     .target-visual:hover {
         transform: scale(1.08);
-        box-shadow: 0 0 15px var(--shadow); /* Efek glow saat hover */
+        box-shadow: 0 0 15px var(--shadow);
     }
     
-    /* Definisi target face (warna tetap sama) */
     .target-10zone {
       background: var(--target-white); border: 1px solid #ddd;
     }
@@ -220,6 +237,43 @@
       top: 33%; bottom: 33%; left: 33%; right: 33%;
       border-radius: 50%; background: var(--target-gold); z-index: 1; 
     }
+    
+    /* --- PERUBAHAN: Media Query untuk Desktop --- */
+    @media (min-width: 768px) {
+      body {
+        padding: 20px; /* Kembalikan padding desktop */
+      }
+      .wrap {
+        width: 700px; /* Batasi lebar di desktop */
+        max-width: 92%;
+        margin: 20px auto;
+        padding: 20px;
+      }
+      p.lead {
+        width: auto; /* Kembalikan auto width */
+      }
+      .global-config {
+        flex-direction: row; /* Buat kontrol berdampingan */
+        justify-content: center;
+        gap: 20px;
+      }
+      .segmented-control {
+        width: auto; /* Jangan full-width */
+        grid-template-columns: auto auto; /* Ukuran berdasarkan konten */
+      }
+      .distance-input {
+        width: auto; /* Jangan full-width */
+      }
+      .distance-input input {
+        flex: 0 1 auto; /* Jangan penuhi ruang */
+        width: 70px;
+      }
+      .foot {
+        flex-direction: row; /* Kembalikan footer berdampingan */
+        justify-content: space-between;
+      }
+    }
+    /* --- AKHIR PERUBAHAN --- */
 
   </style>
 </head>
@@ -248,7 +302,7 @@
       <div class="option" id="opt-10zone" data-mode="10zone">
         <div class="option-content">
           <h2>122cm 10 ring (WA)</h2>
-          <p>Skor: X, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1.</p>
+          <p>Skor: X, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, M.</p>
           <p class="small" style="margin-top:10px;">Klik target untuk memilih.</p>
         </div>
         <div class="target-visual target-10zone">
@@ -259,7 +313,7 @@
       <div class="option" id="opt-6zone" data-mode="6zone">
         <div class="option-content">
           <h2>60cm 6 ring (WA)</h2>
-          <p>Skor: X, 10, 9, 8, 7, 6.</p>
+          <p>Skor: X, 10, 9, 8, 7, 6, M.</p>
           <p class="small" style="margin-top:10px;">Klik target untuk memilih.</p>
         </div>
         <div class="target-visual target-6zone">
@@ -275,14 +329,13 @@
   </div>
 
   <div style="text-align:center;font-size:12px;color:#999;margin-top:15px; padding-bottom: 15px;">
-    Archery Scorekeeper © 2025 — v7.3 by Kevin Febriano
+    Archery Scorekeeper © 2025
   </div>
 
   <script>
     const choicesContainer = document.querySelector('.choices');
     const arrowSelector = document.getElementById('arrowSelector');
 
-    // 1. Logika untuk Segmented Control (Pilih Panah)
     arrowSelector.addEventListener('click', (e) => {
       const button = e.target.closest('.arrow-option');
       if (button) {
@@ -291,7 +344,6 @@
       }
     });
 
-    // 2. Logika untuk Melanjutkan (Klik Target)
     choicesContainer.addEventListener('click', (e) => {
       const targetVisual = e.target.closest('.target-visual');
       

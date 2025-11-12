@@ -40,20 +40,39 @@
       background: var(--bg);
       color: var(--text-primary);
       font-size:15px;
-      zoom: 1.25; 
     }
-    .wrap{max-width:980px;margin:20px auto;padding:18px}
-    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .wrap{
+      width: 100%;
+      max-width: 100%;
+      padding: 10px;
+      margin: 0;
+    }
+    header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
     h1{margin:0;color:var(--accent)}
-    .grid{display:grid;grid-template-columns:1fr 340px;gap:14px}
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
     .card{
       background: var(--panel);
-      padding:16px;
+      padding: 12px;
       border-radius: 8px;
       box-shadow: 0 0 15px var(--shadow);
       border: 1px solid var(--border-color);
     }
-    .players{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .players{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
     .player{
       padding:12px;
       border-radius: 6px;
@@ -108,8 +127,24 @@
       box-shadow: 0 0 0 3px var(--accent-light);
     }
     
-    .controls{display:flex;gap:10px}
-    #endBtn{background:var(--danger);color:#fff;border-color:var(--danger);}
+    /* --- Tata Letak Tombol Kontrol (Mobile-First) --- */
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap: wrap;
+    }
+    #backToChoose, #exportBtn, #resetBtn {
+        flex-grow: 1;
+        flex-basis: 0;
+        min-width: 90px;
+    }
+    #endBtn{
+      background:var(--danger);
+      color:#fff;
+      border-color:var(--danger);
+      width: 100%;
+      margin-top: 8px;
+    }
     #endBtn:hover{background:#c9302c;border-color:#c9302c;color:#fff;}
     #endBtn.done{
       background:var(--success);
@@ -117,23 +152,37 @@
       color:#000;
       cursor:default;
       pointer-events:none;
+      width: 100%;
+      margin-top: 8px;
     }
-    #exportBtn,#resetBtn,#backToChoose {}
+    /* --- AKHIR --- */
+
     #prevEnd,#nextEnd,#addFromInput {}
     #addFromInput{padding:8px 12px;}
 
-    /* --- CSS TOMBOL SKOR --- */
-    .pad{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap} 
+    /* --- CSS TOMBOL SKOR FLEKSIBEL --- */
+    .pad{
+      display:flex;
+      gap: 5px;
+      margin-top:10px;
+      flex-wrap:wrap;
+    } 
     .pad button{
-      width:42px;height:42px;padding:0;font-size:16px;font-weight:700;
+      flex-grow: 1;
+      flex-basis: 0;
+      min-width: 40px;
+      height: 42px;
+      padding:0;
+      font-size:16px;
+      font-weight:700;
     } 
     
     .mode-10zone .pad {
       gap: 4px;
     }
     .mode-10zone .pad button {
-      width: 36px;
-      height: 36px;
+      min-width: 30px;
+      height: 38px;
       font-size: 14px;
       font-weight: 700;
     }
@@ -164,25 +213,18 @@
       color: var(--target-white);
       border-color: #000;
     }
+    .pad button[data-score="M"],
     .pad button[data-score="2"],
     .pad button[data-score="1"] {
       background-color: var(--target-white);
       color: var(--target-black);
       border-color: #ccc;
     }
-    
-    /* --- PERUBAHAN CSS: Tombol Miss menjadi Putih --- */
-    .pad button[data-score="M"] {
-      background-color: var(--target-white); /* Putih */
-      color: var(--target-black); /* Hitam */
-      border-color: #ccc; /* Batas abu-abu */
+    .pad button[data-score="M"]:hover,
+    .pad button[data-score="2"]:hover,
+    .pad button[data-score="1"]:hover {
+       background-color: #f4f4f4; color: #000;
     }
-    .pad button[data-score="M"]:hover {
-       background-color: #f4f4f4; /* Sedikit lebih terang saat hover */
-       color: #000;
-    }
-    /* --- AKHIR PERUBAHAN CSS --- */
-
     .pad button[data-score="X"]:hover,
     .pad button[data-score="10"]:hover,
     .pad button[data-score="9"]:hover {
@@ -200,26 +242,33 @@
     .pad button[data-score="3"]:hover {
        background-color: #555; color: #fff;
     }
-    .pad button[data-score="2"]:hover,
-    .pad button[data-score="1"]:hover {
-       background-color: #f4f4f4; color: #000;
-    }
-
+    
     /* --- Leaderboard & Panah --- */
     aside .leader{
       display:flex;
       justify-content:space-between;
       padding:8px 0;
       border-bottom:1px solid var(--border-color);
+      flex-wrap: wrap;
     }
     aside .leader > div:last-child {
       color: var(--accent);
       font-weight: 600;
+      flex-basis: 100%;
+      text-align: right;
+    }
+    /* Ini (400px) sengaja dibiarkan untuk leaderboard di ponsel besar */
+    @media (min-width: 400px) {
+      aside .leader { flex-wrap: nowrap; }
+      aside .leader > div:last-child {
+        flex-basis: auto;
+        text-align: right;
+      }
     }
     
     .muted{color:var(--text-muted);font-size:13px}
     
-    .top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px; flex-wrap: wrap; gap: 10px;}
     .small{font-size:12px;color:var(--text-muted)}
     .meta-seri{font-size:13px;font-weight:700;color:var(--text-muted);margin-top:10px}
     .current-arrows{display:flex;gap:6px;margin:6px 0 8px 0;}
@@ -259,22 +308,17 @@
     .arrow-box.filled.score-3 {
       background-color: var(--target-black); color: var(--target-white); border-color: #000;
     }
+    .arrow-box.filled.miss,
     .arrow-box.filled.score-2,
     .arrow-box.filled.score-1 {
       background-color: var(--target-white); color: var(--target-black); border-color: #ccc;
     }
-    
-    /* --- PERUBAHAN CSS: Kotak Miss menjadi Putih --- */
-    .arrow-box.filled.miss {
-      background: var(--target-white); /* Putih */
-      color: var(--target-black); /* Hitam */
-      border-color: #ccc; /* Batas abu-abu */
-    }
-    .arrow-box.filled.miss:hover {
-      background: #f4f4f4; /* Sedikit lebih terang saat hover */
+    .arrow-box.filled.miss:hover,
+    .arrow-box.filled.score-2:hover,
+    .arrow-box.filled.score-1:hover {
+      background: #f4f4f4;
       color: #000;
     }
-    /* --- AKHIR PERUBAHAN CSS --- */
 
     .remove-btn{
       position:absolute;top:6px;right:8px;background:none;border:none;padding:0 4px;
@@ -283,7 +327,49 @@
       cursor:pointer;line-height:1;
     }
     .remove-btn:hover{color:var(--danger);}
-    @media(max-width:900px){.grid{grid-template-columns:1fr}.players{grid-template-columns:1fr}}
+    
+    
+    /* --- PERUBAHAN: Media Query untuk Desktop --- */
+    @media (min-width: 768px) {
+      body {
+        padding: 20px; /* Kembalikan padding desktop */
+      }
+      .wrap {
+        width: 980px; /* Batasi lebar di desktop */
+        max-width: 980px;
+        margin: 20px auto;
+        padding: 18px;
+      }
+      header {
+        flex-wrap: nowrap; /* Header 1 baris */
+      }
+      header > div:last-child {
+        text-align: right; /* Kontrol di kanan */
+        width: auto;
+      }
+      .grid {
+        grid-template-columns: 1fr 340px; /* Layout 2 kolom */
+      }
+      .players {
+        grid-template-columns: 1fr 1fr; /* Atlet 2 kolom */
+      }
+      .controls {
+        flex-wrap: nowrap; /* Tombol kontrol 1 baris */
+      }
+      #backToChoose, #exportBtn, #resetBtn {
+        flex-grow: 0; /* Jangan penuhi ruang */
+      }
+      #endBtn {
+        width: auto; /* Jangan full-width */
+        margin-top: 0;
+      }
+      #endBtn.done {
+        width: auto;
+        margin-top: 0;
+      }
+    }
+    /* --- AKHIR PERUBAHAN --- */
+    
   </style>
 </head>
 <body>
@@ -294,7 +380,7 @@
         <div class="small" id="modeLabel">Memuat mode...</div>
       </div>
       
-      <div style="text-align: right;">
+      <div style="text-align: left; width: 100%;">
         <div id="clock" class="small muted" style="margin-bottom: 8px; font-weight: 600; min-height: 1.2em;"></div>
         <div class="controls">
           <button id="backToChoose">Kembali</button> 
@@ -312,6 +398,7 @@
         <span class="muted">Jarak Target: <span id="distanceLabel" style="font-weight:600; color: var(--text-primary);">...</span> M</span>
       </div>
     </div>
+    
     <div class="grid">
       <main>
         <div class="card">
@@ -354,6 +441,7 @@
         </div>
       </aside>
     </div>
+    
   </div> 
   
   <div style="text-align:center;font-size:12px;color:#999;margin-top:20px; padding-bottom: 20px;">
