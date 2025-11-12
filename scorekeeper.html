@@ -170,14 +170,19 @@
       color: var(--target-black);
       border-color: #ccc;
     }
+    
+    /* --- PERUBAHAN CSS: Tombol Miss menjadi Putih --- */
     .pad button[data-score="M"] {
-      background-color: #444;
-      color: #aaa;
-      border-color: #555;
+      background-color: var(--target-white); /* Putih */
+      color: var(--target-black); /* Hitam */
+      border-color: #ccc; /* Batas abu-abu */
     }
     .pad button[data-score="M"]:hover {
-       background-color: #555; color: #fff;
+       background-color: #f4f4f4; /* Sedikit lebih terang saat hover */
+       color: #000;
     }
+    /* --- AKHIR PERUBAHAN CSS --- */
+
     .pad button[data-score="X"]:hover,
     .pad button[data-score="10"]:hover,
     .pad button[data-score="9"]:hover {
@@ -213,10 +218,6 @@
     }
     
     .muted{color:var(--text-muted);font-size:13px}
-    
-    /* --- PERUBAHAN CSS: Hapus CSS Input Jarak --- */
-    /* .distance-input { ... } Dihapus */
-    /* --- AKHIR PERUBAHAN CSS --- */
     
     .top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
     .small{font-size:12px;color:var(--text-muted)}
@@ -262,15 +263,18 @@
     .arrow-box.filled.score-1 {
       background-color: var(--target-white); color: var(--target-black); border-color: #ccc;
     }
+    
+    /* --- PERUBAHAN CSS: Kotak Miss menjadi Putih --- */
     .arrow-box.filled.miss {
-      background: #444;
-      color: #aaa;
-      border-color: #555;
+      background: var(--target-white); /* Putih */
+      color: var(--target-black); /* Hitam */
+      border-color: #ccc; /* Batas abu-abu */
     }
     .arrow-box.filled.miss:hover {
-      background: #555;
-      color: #fff;
+      background: #f4f4f4; /* Sedikit lebih terang saat hover */
+      color: #000;
     }
+    /* --- AKHIR PERUBAHAN CSS --- */
 
     .remove-btn{
       position:absolute;top:6px;right:8px;background:none;border:none;padding:0 4px;
@@ -353,7 +357,7 @@
   </div> 
   
   <div style="text-align:center;font-size:12px;color:#999;margin-top:20px; padding-bottom: 20px;">
-    Archery Scorekeeper © 2025 — v7.3 by Kevin Febriano
+    Archery Scorekeeper © 2025
   </div>
   
   <script src="script-scorekeeper.js"></script>

@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const modeLabel = document.getElementById('modeLabel');
   const backToChoose = document.getElementById('backToChoose');
   const arrowsPerEndLabel = document.getElementById('arrowsPerEndLabel');
-  const distanceLabel = document.getElementById('distanceLabel'); // ELEMEN BARU
+  const distanceLabel = document.getElementById('distanceLabel');
   const playersEl = document.getElementById('players');
   const leaderboardEl = document.getElementById('leaderboard');
   const numCompEl = document.getElementById('numComp');
@@ -44,11 +44,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (arrowsPerEndLabel) {
     arrowsPerEndLabel.textContent = arrowsPerEndFixed;
   }
-  // --- PERUBAHAN: Tampilkan Jarak ---
   if (distanceLabel) {
     distanceLabel.textContent = targetDistance;
   }
-  // --- AKHIR PERUBAHAN ---
 
   const scoringButtonsByMode = {
     '10zone': ['X', '10', '9', '8', '7', '6', '5', '4', '3', '2', '1', 'M'],
@@ -75,9 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
       
       if ((mode === '10zone' || mode === '6zone') && state.competitors.length > 0) {
         state.competitors.forEach(p => {
-          if (typeof p.xCount === 'undefined' || typeof p.xPlusTensCount === 'undefined') { 
-            p.xCount = 0; 
-            p.xPlusTensCount = 0; 
+          if (typeof p.tensCount === 'undefined' || typeof p.xPlusTensCount === 'undefined') { 
             recalculateStats(p); 
           }
         });
@@ -89,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function recalculateStats(p) {
-    let total = 0, missCount = 0, xCount = 0, xPlusTensCount = 0; 
+    let total = 0, missCount = 0, xCount = 0, tensCount = 0, xPlusTensCount = 0;
     for (let i = 1; i <= maxEnds; i++) {
       if (p.scores[i]) {
         p.scores[i].forEach(arrow => {
@@ -102,6 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
                  xCount++;
                  xPlusTensCount++; 
               } else if (arrow.score === 10) {
+                 tensCount++; 
                  xPlusTensCount++; 
               }
             }
@@ -112,7 +109,8 @@ document.addEventListener("DOMContentLoaded", () => {
     p.total = total;
     p.missCount = missCount;
     p.xCount = xCount;
-    p.xPlusTensCount = xPlusTensCount; 
+    p.tensCount = tensCount; // Stat untuk sorting
+    p.xPlusTensCount = xPlusTensCount; // Stat untuk display
   }
 
   function render() {
@@ -196,17 +194,19 @@ document.addEventListener("DOMContentLoaded", () => {
       playersEl.appendChild(div);
     });
 
+    // Logika Sorting (Total -> X -> 10)
     const sorted = [...state.competitors].sort((a, b) => 
         b.total - a.total || 
-        ((mode === '10zone' || mode === '6zone') ? (b.xPlusTensCount - a.xPlusTensCount) : 0) ||
-        ((mode === '10zone' || mode === '6zone') ? (b.xCount - a.xCount) : 0) ||
+        ((mode === '10zone' || mode === '6zone') ? (b.xCount - a.xCount) : 0) || // 1. X
+        ((mode === '10zone' || mode === '6zone') ? (b.tensCount - a.tensCount) : 0) || // 2. 10
         a.missCount - b.missCount
     );
     
     leaderboardEl.innerHTML = sorted.map((p, i) => {
         let stats;
+        // Tampilan Leaderboard (X+10 dan X)
         if (mode === '10zone' || mode === '6zone') {
-          stats = `${p.total} (X+10: ${p.xPlusTensCount}, X: ${p.xCount})`;
+          stats = `${p.total} (X+10: ${p.xPlusTensCount}), (X: ${p.xCount})`;
         } else {
           stats = `${p.total}`;
         }
@@ -230,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const emptyArrows = Array(arrowsPerEndFixed).fill(null);
     for (let i = 1; i <= maxEnds; i++) newScores[i] = [...emptyArrows];
     
-    const newP = { id, name, scores: newScores, total: 0, missCount: 0, xCount: 0, xPlusTensCount: 0 };
+    const newP = { id, name, scores: newScores, total: 0, missCount: 0, xCount: 0, tensCount: 0, xPlusTensCount: 0 };
     
     state.competitors.push(newP);
     state.selectedId = id;
@@ -334,7 +334,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if(changed) saveState();
   }
 
-  // --- Logika "Reset Sesi" (Sudah diubah) ---
   function resetRound() {
     if (!confirm('Reset semua skor? (Nama atlet akan tetap ada)')) return;
     
@@ -350,6 +349,7 @@ document.addEventListener("DOMContentLoaded", () => {
         p.total = 0;
         p.missCount = 0;
         p.xCount = 0;
+        p.tensCount = 0;
         p.xPlusTensCount = 0;
     });
 
@@ -363,7 +363,6 @@ document.addEventListener("DOMContentLoaded", () => {
     saveState();
     render();
   }
-  // --- AKHIR Logika "Reset Sesi" ---
 
   function endRound() {
     if (!state.matchEnded) {
@@ -428,16 +427,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   prevEndBtn.addEventListener('click', prevEnd);
 
-  // --- PERUBAHAN: Hapus juga 'targetDistance' ---
   backToChoose.addEventListener('click', () => {
     if (!confirm('Kembali ke pemilihan mode? Pengaturan tidak tersimpan.')) return;
     localStorage.removeItem('targetMode');
     localStorage.removeItem('archeryState');
     localStorage.removeItem('arrowsPerEnd'); 
-    localStorage.removeItem('targetDistance'); // TAMBAHAN
+    localStorage.removeItem('targetDistance');
     window.location.href = 'index.html';
   });
-  // --- AKHIR PERUBAHAN ---
 
   window.addEventListener('keydown', (e) => {
     if (document.activeElement === newName) {
@@ -445,8 +442,34 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
     if (state.matchEnded) return;
+
+    if (!state.selectedId) {
+      return;
+    }
+
+    if (e.key === 'Backspace') {
+      e.preventDefault(); 
+      
+      const p = state.competitors.find(x => x.id === state.selectedId);
+      if (!p) return;
+
+      const currentScores = p.scores[state.currentEnd];
+      
+      let lastFilledIndex = -1;
+      for (let i = currentScores.length - 1; i >= 0; i--) {
+        if (currentScores[i] !== null) {
+          lastFilledIndex = i;
+          break;
+        }
+      }
+      
+      if (lastFilledIndex !== -1) {
+        removeSpecificArrow(p.id, state.currentEnd, lastFilledIndex);
+      }
+      return; 
+    }
+
     const key = e.key.toUpperCase();
-    
     if (key === '0') return recordScoreManual('0');
     if (scoringButtonsByMode[mode].includes(key)) recordScoreManual(key);
   });
@@ -463,10 +486,11 @@ document.addEventListener("DOMContentLoaded", () => {
       headers.push('X'); 
     }
 
+    // Sorting (Total -> X -> 10)
     const sortedCompetitors = [...state.competitors].sort((a, b) => 
         b.total - a.total || 
-        ((mode === '10zone' || mode === '6zone') ? (b.xPlusTensCount - a.xPlusTensCount) : 0) ||
         ((mode === '10zone' || mode === '6zone') ? (b.xCount - a.xCount) : 0) ||
+        ((mode === '10zone' || mode === '6zone') ? (b.tensCount - a.tensCount) : 0) ||
         a.missCount - b.missCount
     );
 
