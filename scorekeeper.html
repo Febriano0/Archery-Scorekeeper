@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Archery Scorekeeper</title>
+  
+  <style>
+    /* --- TEMA FUTURISTIK --- */
+    :root{
+      --bg: #12141a;
+      --panel: #1f222b;
+      --border-color: rgba(0, 174, 255, 0.2);
+      --shadow: rgba(0, 174, 255, 0.1);
+      
+      --text-primary: #f0f0f0;
+      --text-muted: #8a91a0;
+      
+      --accent: #00aeff;
+      --accent-dark: #008fcc;
+      --accent-light: rgba(0, 174, 255, 0.1);
+
+      --danger: #ff4d4d;
+      --success: #00ff8a;
+      
+      /* Warna Target */
+      --target-gold: #FFD700;
+      --target-red: #DD0000;
+      --target-blue: #0099FF;
+      --target-black: #333;
+      --target-white: #fff;
+      
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    /* --- AKHIR TEMA --- */
+    
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background: var(--bg);
+      color: var(--text-primary);
+      font-size:15px;
+      zoom: 1.25; 
+    }
+    .wrap{max-width:980px;margin:20px auto;padding:18px}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    h1{margin:0;color:var(--accent)}
+    .grid{display:grid;grid-template-columns:1fr 340px;gap:14px}
+    .card{
+      background: var(--panel);
+      padding:16px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px var(--shadow);
+      border: 1px solid var(--border-color);
+    }
+    .players{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .player{
+      padding:12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--bg);
+      position:relative;
+      cursor:pointer;
+      transition:background .1s ease,transform .1s ease, border-color .1s ease;
+      box-shadow: none;
+    }
+    .player:not(.selected):hover{
+      background: var(--panel);
+      transform:translateY(-2px);
+      border-color: var(--accent);
+    }
+    .player.selected{
+      outline: none;
+      border: 2px solid var(--accent);
+      cursor:default;
+      background: var(--panel);
+      box-shadow: 0 0 10px var(--shadow);
+    }
+    .name{font-weight:700;margin-bottom:6px;color:var(--text-primary);font-size:18px}
+    .meta{color:var(--text-muted);font-size:13px;margin-bottom:6px}
+    
+    button{
+      padding:8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--accent-light);
+      cursor:pointer;
+      font-weight:600;
+      color: var(--text-primary);
+      transition:all .15s ease;
+    }
+    button:hover{
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    input[type="text"]{
+      padding:8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      flex:1;
+      background: var(--bg);
+      color: var(--text-primary);
+    }
+    input[type="text"]:focus{
+      outline:none;
+      border-color:var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-light);
+    }
+    
+    .controls{display:flex;gap:10px}
+    #endBtn{background:var(--danger);color:#fff;border-color:var(--danger);}
+    #endBtn:hover{background:#c9302c;border-color:#c9302c;color:#fff;}
+    #endBtn.done{
+      background:var(--success);
+      border-color:var(--success);
+      color:#000;
+      cursor:default;
+      pointer-events:none;
+    }
+    #exportBtn,#resetBtn,#backToChoose {}
+    #prevEnd,#nextEnd,#addFromInput {}
+    #addFromInput{padding:8px 12px;}
+
+    /* --- CSS TOMBOL SKOR --- */
+    .pad{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap} 
+    .pad button{
+      width:42px;height:42px;padding:0;font-size:16px;font-weight:700;
+    } 
+    
+    .mode-10zone .pad {
+      gap: 4px;
+    }
+    .mode-10zone .pad button {
+      width: 36px;
+      height: 36px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    /* --- WARNA TOMBOL SKOR --- */
+    .pad button[data-score="X"],
+    .pad button[data-score="10"],
+    .pad button[data-score="9"] {
+      background-color: var(--target-gold);
+      color: #000;
+      border-color: #d4b300;
+    }
+    .pad button[data-score="8"],
+    .pad button[data-score="7"] {
+      background-color: var(--target-red);
+      color: var(--target-white);
+      border-color: #a00;
+    }
+    .pad button[data-score="6"],
+    .pad button[data-score="5"] {
+      background-color: var(--target-blue);
+      color: var(--target-white);
+      border-color: #007acc;
+    }
+    .pad button[data-score="4"],
+    .pad button[data-score="3"] {
+      background-color: var(--target-black);
+      color: var(--target-white);
+      border-color: #000;
+    }
+    .pad button[data-score="2"],
+    .pad button[data-score="1"] {
+      background-color: var(--target-white);
+      color: var(--target-black);
+      border-color: #ccc;
+    }
+    .pad button[data-score="M"] {
+      background-color: #444;
+      color: #aaa;
+      border-color: #555;
+    }
+    .pad button[data-score="M"]:hover {
+       background-color: #555; color: #fff;
+    }
+    .pad button[data-score="X"]:hover,
+    .pad button[data-score="10"]:hover,
+    .pad button[data-score="9"]:hover {
+       background-color: #e6c000; color: #000;
+    }
+    .pad button[data-score="8"]:hover,
+    .pad button[data-score="7"]:hover {
+       background-color: #b00; color: #fff;
+    }
+    .pad button[data-score="6"]:hover,
+    .pad button[data-score="5"]:hover {
+       background-color: #007acc; color: #fff;
+    }
+    .pad button[data-score="4"]:hover,
+    .pad button[data-score="3"]:hover {
+       background-color: #555; color: #fff;
+    }
+    .pad button[data-score="2"]:hover,
+    .pad button[data-score="1"]:hover {
+       background-color: #f4f4f4; color: #000;
+    }
+
+    /* --- Leaderboard & Panah --- */
+    aside .leader{
+      display:flex;
+      justify-content:space-between;
+      padding:8px 0;
+      border-bottom:1px solid var(--border-color);
+    }
+    aside .leader > div:last-child {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    
+    .muted{color:var(--text-muted);font-size:13px}
+    
+    /* --- PERUBAHAN CSS: Hapus CSS Input Jarak --- */
+    /* .distance-input { ... } Dihapus */
+    /* --- AKHIR PERUBAHAN CSS --- */
+    
+    .top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .small{font-size:12px;color:var(--text-muted)}
+    .meta-seri{font-size:13px;font-weight:700;color:var(--text-muted);margin-top:10px}
+    .current-arrows{display:flex;gap:6px;margin:6px 0 8px 0;}
+    .arrow-box{
+      flex:1;height:36px;
+      border-radius: 4px;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:700;font-size:15px;
+      background: var(--bg);
+      border: 1px solid var(--border-color);
+    }
+    
+    .arrow-box.filled{
+      cursor:pointer;
+      transition:background .1s ease,border-color .1s ease, transform .1s ease;
+    }
+    .arrow-box.filled:hover{
+      transform: scale(1.05);
+      border-color: var(--text-primary);
+    }
+    
+    /* --- WARNA KOTAK SKOR --- */
+    .arrow-box.filled.score-x,
+    .arrow-box.filled.score-10,
+    .arrow-box.filled.score-9 {
+      background-color: var(--target-gold); color: #000; border-color: #d4b300;
+    }
+    .arrow-box.filled.score-8,
+    .arrow-box.filled.score-7 {
+      background-color: var(--target-red); color: var(--target-white); border-color: #a00;
+    }
+    .arrow-box.filled.score-6,
+    .arrow-box.filled.score-5 {
+      background-color: var(--target-blue); color: var(--target-white); border-color: #007acc;
+    }
+    .arrow-box.filled.score-4,
+    .arrow-box.filled.score-3 {
+      background-color: var(--target-black); color: var(--target-white); border-color: #000;
+    }
+    .arrow-box.filled.score-2,
+    .arrow-box.filled.score-1 {
+      background-color: var(--target-white); color: var(--target-black); border-color: #ccc;
+    }
+    .arrow-box.filled.miss {
+      background: #444;
+      color: #aaa;
+      border-color: #555;
+    }
+    .arrow-box.filled.miss:hover {
+      background: #555;
+      color: #fff;
+    }
+
+    .remove-btn{
+      position:absolute;top:6px;right:8px;background:none;border:none;padding:0 4px;
+      font-size:20px;font-weight:700;
+      color: #555;
+      cursor:pointer;line-height:1;
+    }
+    .remove-btn:hover{color:var(--danger);}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}.players{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Archery Scorekeeper</h1>
+        <div class="small" id="modeLabel">Memuat mode...</div>
+      </div>
+      
+      <div style="text-align: right;">
+        <div id="clock" class="small muted" style="margin-bottom: 8px; font-weight: 600; min-height: 1.2em;"></div>
+        <div class="controls">
+          <button id="backToChoose">Kembali</button> 
+          <button id="exportBtn">Export CSV</button>
+          <button id="resetBtn">Reset Sesi</button>
+          <button id="endBtn">Akhiri Sesi</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="card top-row">
+      <div><span class="muted">Anak panah / seri: <span id="arrowsPerEndLabel">...</span></span></div>
+      
+      <div>
+        <span class="muted">Jarak Target: <span id="distanceLabel" style="font-weight:600; color: var(--text-primary);">...</span> M</span>
+      </div>
+    </div>
+    <div class="grid">
+      <main>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div><strong>Daftar Atlet</strong></div>
+          </div>
+
+          <div style="margin-top:0px; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+            <div style="margin-bottom:8px; font-weight:600; color: var(--text-primary);">Input skor manual</div>
+            
+            <div style="display:flex;gap:8px">
+              <input id="newName" type="text" placeholder="Nama atlet" />
+              <button id="addFromInput" style="flex-grow: 1;">Tambah</button>
+            </div>
+
+          </div>
+          <div class="players" id="players"></div>
+          <div style="margin-top:12px;color:var(--text-muted);font-size:13px">
+            Tips: Klik nama atlet → gunakan tombol skor. Klik skor di kotak untuk menghapusnya.
+          </div>
+        </div>
+      </main>
+
+      <aside>
+        <div class="card">
+          <h3 style="margin-top:0">Leaderboard</h3>
+          <div id="leaderboard"></div>
+
+          <div style="margin-top:12px">
+            <div class="muted">Competitors: <span id="numComp">0</span></div>
+            <div class="muted">Seri maksimal per ronde: <span id="maxEnds">...</span></div>
+            <div style="display:flex;gap:12px;margin-top:10px;align-items:center;">
+              <button id="prevEnd" style="flex:1;">◀</button>
+              <div style="text-align:center;font-weight:bold;color:var(--accent);white-space:nowrap;">
+                Seri: <span id="currentEnd">1</span> / <span id="maxEndsLabel">...</span>
+              </div>
+              <button id="nextEnd" style="flex:1;">▶</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div> 
+  
+  <div style="text-align:center;font-size:12px;color:#999;margin-top:20px; padding-bottom: 20px;">
+    Archery Scorekeeper © 2025 — v7.3 by Kevin Febriano
+  </div>
+  
+  <script src="script-scorekeeper.js"></script>
+</body>
+</html>

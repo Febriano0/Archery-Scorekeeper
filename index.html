@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pilih Target — Archery Scorekeeper</title>
+  <style>
+    /* --- TEMA FUTURISTIK --- */
+    :root {
+      --bg: #12141a;
+      --panel: #1f222b;
+      --border-color: rgba(0, 174, 255, 0.2);
+      --shadow: rgba(0, 174, 255, 0.1);
+      
+      --text-primary: #f0f0f0;
+      --text-muted: #8a91a0;
+      
+      --accent: #00aeff;
+      --accent-dark: #008fcc;
+      --accent-light: rgba(0, 174, 255, 0.1);
+      
+      /* Warna Target */
+      --target-gold: #FFD700;
+      --target-red: #DD0000;
+      --target-blue: #0099FF;
+      --target-black: #333;
+      --target-white: #fff;
+      
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    /* --- AKHIR TEMA --- */
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items: center;
+      justify-content:center;
+      background: var(--bg);
+      color: var(--text-primary);
+    }
+    .wrap{
+      width: 700px; 
+      max-width:92%;
+      padding: 20px; 
+      background: var(--panel);
+      border-radius: 8px;
+      box-shadow: 0 0 20px var(--shadow);
+      border: 1px solid var(--border-color);
+    } 
+
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom: 12px;}
+    h1{margin:0;font-size:20px;color:var(--accent)}
+    p.lead{margin:4px 0 0;color:var(--text-muted)}
+    .choices{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px}
+    .option{
+      flex:1;
+      min-width:220px;
+      padding:18px;
+      border-radius: 6px;
+      background: var(--bg);
+      border: 1px solid var(--border-color);
+      cursor: default;
+      box-shadow: none;
+      transition:transform .14s ease, border-color .14s ease;
+      display:flex; 
+      flex-direction: row; 
+      align-items: center; 
+      gap: 15px; 
+    }
+    .option:hover{
+      transform:translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 0 15px var(--shadow);
+    }
+    .option-content {
+      flex-grow: 1; 
+    }
+    .option h2{margin:0;color:var(--text-primary);font-size:18px}
+    .option p{margin:0;color:var(--text-muted);font-size:13px}
+    .foot{display:flex;justify-content:space-between;align-items:center;margin-top: 14px;color:var(--text-muted);font-size:13px}
+    .small{font-size:12px;color:var(--text-muted)}
+
+    /* --- CSS: Konfigurasi Global --- */
+    .global-config {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 10px;
+      margin-bottom: 18px;
+      padding: 12px;
+      background: var(--bg);
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+    
+    /* Style untuk Segmented Control (Pengganti Switch) */
+    .segmented-control {
+      display: flex;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+    .arrow-option {
+      padding: 8px 16px;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-muted);
+      border: none;
+      font-weight: 600;
+      transition: background .2s ease, color .2s ease;
+    }
+    .arrow-option:not(:last-child) {
+      border-right: 1px solid var(--border-color);
+    }
+    .arrow-option.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .arrow-option:hover:not(.active) {
+      background: var(--accent-light);
+      color: var(--text-primary);
+    }
+
+    /* Style untuk Input Jarak */
+    .distance-input {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .distance-input label {
+      font-size: 13px;
+      white-space: nowrap;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .distance-input input {
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--panel); /* Sedikit beda dari bg */
+      color: var(--text-primary);
+      width: 70px;
+      text-align: center;
+      font-weight: 600;
+    }
+    .distance-input input::-webkit-outer-spin-button,
+    .distance-input input::-webkit-inner-spin-button {
+      -webkit-appearance: none; margin: 0;
+    }
+    .distance-input input[type=number] {
+      -moz-appearance: textfield;
+    }
+    
+    /* --- PERUBAHAN CSS: Menambahkan style untuk unit (M) --- */
+    .distance-unit {
+      font-size: 13px;
+      white-space: nowrap;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    /* --- AKHIR PERUBAHAN CSS --- */
+
+
+    /* --- CSS VISUAL TARGET --- */
+    .target-visual {
+      height: 80px;
+      width: 80px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.1); /* Batas visual target */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .target-visual:hover {
+        transform: scale(1.08);
+        box-shadow: 0 0 15px var(--shadow); /* Efek glow saat hover */
+    }
+    
+    /* Definisi target face (warna tetap sama) */
+    .target-10zone {
+      background: var(--target-white); border: 1px solid #ddd;
+    }
+    .target-10zone::before {
+      content: ''; position: absolute; top: 10%; bottom: 10%; left: 10%; right: 10%;
+      border-radius: 50%; background: var(--target-black); 
+    }
+    .target-10zone::after {
+      content: ''; position: absolute; top: 20%; bottom: 20%; left: 20%; right: 20%;
+      border-radius: 50%; background: var(--target-blue); 
+    }
+    .target-10zone > div {
+      position: absolute; top: 30%; bottom: 30%; left: 30%; right: 30%;
+      border-radius: 50%; background: var(--target-red); z-index: 1; 
+      display:flex; align-items:center; justify-content:center;
+    }
+    .target-10zone > div > span {
+      display:block; width: 50%; height: 50%;
+      background: var(--target-gold); border-radius: 50%;
+    }
+    
+    .target-6zone {
+       background: var(--target-blue);
+    }
+    .target-6zone::before {
+      content: ''; position: absolute; 
+      top: 17%; bottom: 17%; left: 17%; right: 17%;
+      border-radius: 50%; background: var(--target-red);
+    }
+    .target-6zone::after {
+      content: ''; position: absolute; 
+      top: 33%; bottom: 33%; left: 33%; right: 33%;
+      border-radius: 50%; background: var(--target-gold); z-index: 1; 
+    }
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Archery Scorekeeper</h1>
+        <p class="lead">Pilih sistem penilaian (target face) untuk ronde ini.</p>
+      </div>
+    </header>
+
+    <div class="global-config">
+      <div class="segmented-control" id="arrowSelector">
+        <button class="arrow-option" data-arrows="3">3 Panah</button>
+        <button class="arrow-option active" data-arrows="6">6 Panah</button>
+      </div>
+      
+      <div class="distance-input">
+        <label for="targetDistance">Jarak:</label> <input type="number" id="targetDistance" name="targetDistance" min="0" step="1" value="18"> 
+        <span class="distance-unit">(M)</span> </div>
+      </div>
+
+    <div class="choices">
+      
+      <div class="option" id="opt-10zone" data-mode="10zone">
+        <div class="option-content">
+          <h2>122cm 10 ring (WA)</h2>
+          <p>Skor: X, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1.</p>
+          <p class="small" style="margin-top:10px;">Klik target untuk memilih.</p>
+        </div>
+        <div class="target-visual target-10zone">
+          <div><span></span></div>
+        </div>
+      </div>
+
+      <div class="option" id="opt-6zone" data-mode="6zone">
+        <div class="option-content">
+          <h2>60cm 6 ring (WA)</h2>
+          <p>Skor: X, 10, 9, 8, 7, 6.</p>
+          <p class="small" style="margin-top:10px;">Klik target untuk memilih.</p>
+        </div>
+        <div class="target-visual target-6zone">
+          <div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="foot">
+      <div>Atur jumlah anak panah & jarak target, lalu klik target face untuk memulai.</div>
+    </div>
+  </div>
+
+  <div style="text-align:center;font-size:12px;color:#999;margin-top:15px; padding-bottom: 15px;">
+    Archery Scorekeeper © 2025 — v7.3 by Kevin Febriano
+  </div>
+
+  <script>
+    const choicesContainer = document.querySelector('.choices');
+    const arrowSelector = document.getElementById('arrowSelector');
+
+    // 1. Logika untuk Segmented Control (Pilih Panah)
+    arrowSelector.addEventListener('click', (e) => {
+      const button = e.target.closest('.arrow-option');
+      if (button) {
+        arrowSelector.querySelector('.arrow-option.active').classList.remove('active');
+        button.classList.add('active');
+      }
+    });
+
+    // 2. Logika untuk Melanjutkan (Klik Target)
+    choicesContainer.addEventListener('click', (e) => {
+      const targetVisual = e.target.closest('.target-visual');
+      
+      if (targetVisual) {
+        const optionCard = targetVisual.closest('.option');
+        const mode = optionCard.dataset.mode;
+        
+        const arrows = arrowSelector.querySelector('.arrow-option.active').dataset.arrows;
+        
+        const distance = document.getElementById('targetDistance').value;
+        
+        localStorage.setItem('targetMode', mode);
+        localStorage.setItem('arrowsPerEnd', arrows);
+        localStorage.setItem('targetDistance', distance); 
+        
+        window.location.href = 'scorekeeper.html';
+      }
+    });
+  </script>
+
+</body>
+</html>
